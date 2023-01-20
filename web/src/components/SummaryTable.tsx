@@ -39,7 +39,7 @@ export const SummaryTable = (props: Props) => {
       </header>
 
       <div className="grid grid-rows-7 grid-flow-col gap-3">
-        {summaryDates.map((date, index) => {
+        {summary.length > 0 && summaryDates.map((date, index) => {
           const dayInSummary = summary.find((day) => {
             return dayjs(date).isSame(day.date, 'day')
           })
@@ -49,7 +49,7 @@ export const SummaryTable = (props: Props) => {
               key={date.toString()}
               date={date}
               amount={dayInSummary?.amount}
-              completed={dayInSummary?.completed}
+              defaultCompleted={dayInSummary?.completed}
             />
           )
         })}

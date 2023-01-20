@@ -60,7 +60,7 @@ export const NewHabitForm = (props: Props) => {
         placeholder="ex.: Exercícios, dormir bem, etc..."
         autoFocus
         value={title}
-        className="p-4 rounded-lg mt-12 bg-zinc-800 text-white placeholder:text-zinc-400 outline-none"
+        className="p-4 rounded-lg mt-12 bg-zinc-800 text-white placeholder:text-zinc-400 outline-none transition-all duration-200 focus:outline-none focus:ring-violet-500 focus:ring-4 focus:ring-offset-2 focus:ring-offset-zinc-900"
       />
 
       <label className="font-semibold leading-tight mt-4">
@@ -72,10 +72,10 @@ export const NewHabitForm = (props: Props) => {
           <Checkbox.Root
             checked={weekDays.includes(index)}
             onCheckedChange={() => handleToggleWeekDay(index)}
-            className="flex items-center gap-x-3 group"
+            className="flex items-center gap-x-3 group focus:outline-none"
             key={day}
           >
-            <div className="w-8 h-8 rounded-lg flex items-center overflow-hidden justify-center bg-zinc-900 border-2 border-zinc-800 group-data-[state=checked]:bg-green-500 group-data-[state=checked]:border-green-500">
+            <div className="w-8 h-8 duration-200 focus:outline-none group-focus:ring-violet-500 group-focus:ring-4 group-focus:ring-offset-2 group-focus:ring-offset-zinc-900 rounded-lg flex items-center overflow-hidden justify-center bg-zinc-900 border-2 border-zinc-800 group-data-[state=checked]:bg-green-500 group-data-[state=checked]:border-green-500">
               <Checkbox.Indicator>
                 <Check size={20} color="white" weight="bold" />
               </Checkbox.Indicator>
@@ -87,7 +87,7 @@ export const NewHabitForm = (props: Props) => {
 
       <button
         type="submit"
-        className="mt-6 rounded-lg p-4 flex items-center justify-center gap-x-3 font-semibold bg-green-600 hover:bg-green-500 transition-all duration-300"
+        className="mt-6 transition-all duration-200 focus:outline-none focus:ring-green-500 focus:ring-4 focus:ring-offset-2 focus:ring-offset-background rounded-lg p-4 flex items-center justify-center gap-x-3 font-semibold bg-green-600 hover:bg-green-500"
       >
         <Check size={20} weight="bold" />
         Confirmar
