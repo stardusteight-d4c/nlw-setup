@@ -1,5 +1,8 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import React from 'react'
 import { Header } from './components/Header'
+import LoginButton from './components/LoginButton'
+import LogoutButton from './components/LogoutButton'
 import { SummaryTable } from './components/SummaryTable'
 import { api } from './lib/axios'
 
@@ -38,12 +41,27 @@ navigator.serviceWorker
   })
 
 export const App = (props: Props) => {
+  const { user, isAuthenticated, isLoading } = useAuth0()
+
+  if (isLoading) {
+    return <div>Loading ...</div>
+  }
+
+  if (user) {
+    console.log(user)
+  }
+
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      <div className="w-full max-w-5xl px-6 flex flex-col gap-y-16">
-        <Header />
-        <SummaryTable />
-      </div>
-    </div>
+    <>
+      <LoginButton />
+      {isAuthenticated && (
+        <div className="w-screen h-screen flex items-center justify-center">
+          <div className="w-full max-w-5xl px-6 flex flex-col gap-y-16">
+            <Header />
+            <SummaryTable />
+          </div>
+        </div>
+      )}
+    </>
   )
 }
