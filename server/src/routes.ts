@@ -15,7 +15,7 @@ async function authRoutes(fastify: FastifyInstance) {
 async function habitRoutes(fastify: FastifyInstance) {
   fastify.post('/create', habitController.create)
   fastify.get('/day', habitController.day)
-  fastify.get('/:id/toggle', habitController.toggleHabit)
+  fastify.patch('/:id/toggle', habitController.toggleHabit)
   fastify.get('/summary', habitController.summary)
 }
 

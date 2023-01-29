@@ -67,6 +67,7 @@ export const App = (props: Props) => {
         )
     }
     setLoading(false)
+
   }, [session])
 
   if (loading) {
@@ -80,14 +81,13 @@ export const App = (props: Props) => {
         picture: user.picture,
       })
       .then((res) => {
-        localStorage.setItem('session', res.data)
         setCurrentUser({
           id: res.data.user.id,
           email: res.data.user.email,
           picture: res.data.user.picture,
         })
+        localStorage.setItem('session', res.data.sessionToken)
       })
-    setLoading(false)
   }
 
   return (
@@ -95,6 +95,7 @@ export const App = (props: Props) => {
       <div className="w-screen h-screen flex items-center justify-center">
         {currentUser.email !== '' ? (
           <div className="w-full max-w-5xl px-6 flex flex-col gap-y-16">
+            {currentUser.email}
             <Header />
             <SummaryTable />
           </div>

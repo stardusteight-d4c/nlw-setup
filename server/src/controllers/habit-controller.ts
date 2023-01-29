@@ -42,9 +42,6 @@ export class HabitController {
 
     const { date, userId } = getDayParams.parse(request.query)
 
-    console.log(request);
-    
-
     const parseDate = dayjs(date).startOf('day')
     const weekDay = parseDate.get('day')
 

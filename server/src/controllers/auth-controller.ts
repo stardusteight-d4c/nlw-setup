@@ -15,7 +15,7 @@ export class AuthController {
 
     const { email, picture } = createUserBody.parse(request.body)
 
-    let user = await prisma.user.findUnique({
+    let user = await prisma.user.findFirst({
       where: {
         email,
       },
