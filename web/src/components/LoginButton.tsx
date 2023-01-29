@@ -2,11 +2,11 @@ import React from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 
 const LoginButton = () => {
-  const { loginWithRedirect } = useAuth0()
+  const { loginWithPopup } = useAuth0()
 
   return (
     <a
-      onClick={() => loginWithRedirect()}
+      onClick={() => loginWithPopup()}
       href="#_"
       className="box-border gap-x-1 relative z-30 inline-flex items-center justify-center w-fit px-8 py-3 overflow-hidden font-bold text-white transition-all focus:ring-red-500 focus:ring-4 focus:ring-offset-2 focus:ring-offset-background bg-red-600 rounded-md cursor-pointer group hover:brightness-125 hover:border-background hover:ring-red-500 ease focus:outline-none"
     >

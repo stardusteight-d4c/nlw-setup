@@ -1,9 +1,12 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useRecoilState } from 'recoil'
 import logoImage from './assets/logo.svg'
 import { Header } from './components/Header'
 import LoginButton from './components/LoginButton'
 import { SummaryTable } from './components/SummaryTable'
 import { api } from './lib/axios'
+import { currentUserState } from './atoms/index'
+import { useEffect, useState } from 'react'
 
 interface Props {}
 
@@ -41,19 +44,54 @@ navigator.serviceWorker
 
 export const App = (props: Props) => {
   const { user, isAuthenticated, isLoading } = useAuth0()
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState)
+  const session = localStorage.getItem('session')
+  const [loading, setLoading] = useState<boolean>(true)
 
-  if (isLoading) {
+  console.log('currentUser', currentUser)
+
+  useEffect(() => {
+    if (session) {
+      api
+        .get('/session', {
+          headers: {
+            authorization: session,
+          },
+        })
+        .then((res) => setCurrentUser({
+          email: res.data.user.email,
+          picture: res.data.user.picture, 
+        }))
+    }
+    setLoading(false)
+  }, [session])
+
+  // criar session Token
+
+  if (loading) {
     return <div>Loading ...</div>
   }
 
-  if (user) {
-    console.log(user)
+  if (user?.email && currentUser.email === '') {
+    api
+      .post('/user', {
+        email: user.email,
+        picture: user.picture,
+      })
+      .then((res) => {
+        localStorage.setItem('session', res.data)
+      })
+    setCurrentUser({
+      email: user.email,
+      picture: user.picture!,
+    })
+    setLoading(false)
   }
 
   return (
     <>
       <div className="w-screen h-screen flex items-center justify-center">
-        {isAuthenticated ? (
+        {currentUser.email !== '' ? (
           <div className="w-full max-w-5xl px-6 flex flex-col gap-y-16">
             <Header />
             <SummaryTable />

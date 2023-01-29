@@ -17,7 +17,7 @@ export async function notificationsRoutes(fastify: FastifyInstance) {
   })
 
   fastify.post('/push/register', (request, reply) => {
-    console.log(request.body)
+    // console.log(request.body)
 
     return reply.status(201).send()
   })
