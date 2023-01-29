@@ -18,7 +18,7 @@ export const SummaryTable = (props: Props) => {
 
   const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
   const summaryDates = generateDatesFromYearBeginning()
-  const minimumSummaryDatesSize = 18 * 7 // 18 weeks
+  const minimumSummaryDatesSize = 365 
   const amountOfDaysToFill = minimumSummaryDatesSize - summaryDates.length // "placeholders"
 
   useEffect(() => {
@@ -26,12 +26,12 @@ export const SummaryTable = (props: Props) => {
   }, [])
 
   return (
-    <div className="w-full flex">
-      <header className="grid grid-rows-7 grid-flow-row gap-3">
+    <div className="scroll-style p-4 w-full overflow-x-scroll flex">
+      <header className="grid grid-rows-7 z-20 bg-background/70 -ml-14 z-fit h-fit fixed grid-flow-row gap-3">
         {weekDays.map((day, index) => (
           <div
             key={`${weekDays}-${index}`}
-            className="text-zinc-400 font-bold text-xl w-10 h-10 flex items-center justify-center"
+            className="text-white font-bold text-xl w-10 h-10 flex items-center justify-center"
           >
             {day}
           </div>

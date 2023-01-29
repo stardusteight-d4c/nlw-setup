@@ -7,9 +7,9 @@ module.exports = {
         background: '#09090A',
       },
       gridTemplateRows: {
-        7: 'repeat(7, minmax(0, 1fr))'
-      }
+        7: 'repeat(7, minmax(0, 1fr))',
+      },
     },
   },
-  plugins: [],
+  plugins: [require('tailwind-scrollbar-hide')],
 }

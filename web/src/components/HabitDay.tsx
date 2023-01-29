@@ -46,7 +46,7 @@ export const HabitDay = ({ defaultCompleted = 0, amount = 0, date }: Props) => {
         )}
       />
       <Popover.Portal>
-        <Popover.Content className="min-w-[320px] p-6 rounded-2xl bg-zinc-900 flex flex-col transition-all duration-200 focus:outline-none focus:ring-violet-500 focus:ring-4 focus:ring-offset-2 focus:ring-offset-background">
+        <Popover.Content className="min-w-[320px] z-50 p-6 rounded-2xl bg-zinc-900 flex flex-col transition-all duration-200 focus:outline-none focus:ring-violet-500 focus:ring-4 focus:ring-offset-2 focus:ring-offset-background">
           <span className="font-semibold text-zinc-400">{dayOfWeek}</span>
           <span className="mt-1 font-extrabold leading-tight text-3xl">
             {dayAndMonth}

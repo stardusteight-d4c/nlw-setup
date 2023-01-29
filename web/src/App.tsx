@@ -1,8 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import React from 'react'
+import logoImage from './assets/logo.svg'
 import { Header } from './components/Header'
 import LoginButton from './components/LoginButton'
-import LogoutButton from './components/LogoutButton'
 import { SummaryTable } from './components/SummaryTable'
 import { api } from './lib/axios'
 
@@ -53,15 +52,19 @@ export const App = (props: Props) => {
 
   return (
     <>
-      <LoginButton />
-      {isAuthenticated && (
-        <div className="w-screen h-screen flex items-center justify-center">
+      <div className="w-screen h-screen flex items-center justify-center">
+        {isAuthenticated ? (
           <div className="w-full max-w-5xl px-6 flex flex-col gap-y-16">
             <Header />
             <SummaryTable />
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex flex-col items-center gap-y-24">
+            <img src={logoImage} alt="Habits" className="w-56" />
+            <LoginButton />
+          </div>
+        )}
+      </div>
     </>
   )
 }
