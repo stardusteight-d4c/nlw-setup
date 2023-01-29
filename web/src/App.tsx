@@ -33,11 +33,11 @@ navigator.serviceWorker
       })
     }
 
-    await api.post('/push/register', {
+    await api.post('/notification/register', {
       subscription,
     })
 
-    await api.post('/push/send', {
+    await api.post('/notification/send', {
       subscription,
     })
   })
@@ -53,20 +53,21 @@ export const App = (props: Props) => {
   useEffect(() => {
     if (session) {
       api
-        .get('/session', {
+        .get('/auth/session', {
           headers: {
             authorization: session,
           },
         })
-        .then((res) => setCurrentUser({
-          email: res.data.user.email,
-          picture: res.data.user.picture, 
-        }))
+        .then((res) =>
+          setCurrentUser({
+            id: res.data.user.id,
+            email: res.data.user.email,
+            picture: res.data.user.picture,
+          })
+        )
     }
     setLoading(false)
   }, [session])
-
-  // criar session Token
 
   if (loading) {
     return <div>Loading ...</div>
@@ -74,17 +75,18 @@ export const App = (props: Props) => {
 
   if (user?.email && currentUser.email === '') {
     api
-      .post('/user', {
+      .post('/auth/login', {
         email: user.email,
         picture: user.picture,
       })
       .then((res) => {
         localStorage.setItem('session', res.data)
+        setCurrentUser({
+          id: res.data.user.id,
+          email: res.data.user.email,
+          picture: res.data.user.picture,
+        })
       })
-    setCurrentUser({
-      email: user.email,
-      picture: user.picture!,
-    })
     setLoading(false)
   }
 

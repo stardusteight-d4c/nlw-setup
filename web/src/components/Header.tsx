@@ -7,8 +7,8 @@ import LogoutButton from './LogoutButton'
 interface Props {}
 
 export const Header = (props: Props) => {
-  return (
-    <header className="w-full max-w-3xl mx-auto flex items-center justify-between">
+  return ( 
+    <header className="w-full max-w-3xl mx-auto z-0 flex items-center justify-between">
       <img src={logoImage} alt="Habits" />
       <div className="flex items-center gap-x-5">
         <LogoutButton />

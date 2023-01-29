@@ -2,12 +2,15 @@ import { Check } from 'phosphor-react'
 import * as Checkbox from '@radix-ui/react-checkbox'
 import { useState } from 'react'
 import { api } from '../lib/axios'
+import { useRecoilState } from 'recoil'
+import { currentUserState } from '../atoms'
 
 interface Props {}
 
 export const NewHabitForm = (props: Props) => {
   const [title, setTitle] = useState<string>()
   const [weekDays, setWeekDays] = useState<number[]>([])
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState)
 
   const availableWeekDays = [
     'Domingo',
@@ -35,8 +38,9 @@ export const NewHabitForm = (props: Props) => {
       return
     }
 
-    await api.post('/habits', {
+    await api.post('/habit/create', {
       title,
+      userId: currentUser.id,
       weekDays,
     })
 
@@ -48,7 +52,7 @@ export const NewHabitForm = (props: Props) => {
   return (
     <form
       onSubmit={(e) => createNewHabit(e)}
-      className="w-full flex flex-col mt-6"
+      className="w-full flex flex-col mt-6 z-50"
     >
       <label htmlFor="title" className="font-semibold leading-tight">
         Qual seu comprometimento?
