@@ -1,4 +1,4 @@
-import React from 'react'
+import loader from '../assets/laoder.svg'
 
 interface Props {}
 

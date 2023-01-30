@@ -22,6 +22,6 @@ export const Header = ({ setLoading }: Props) => {
 }
 
 const style = {
-  wrapper: `w-full max-w-3xl mx-auto z-0 flex items-center justify-between`,
-  contentWrapper: `flex items-center gap-x-5`,
+  wrapper: `w-full max-w-3xl mx-auto z-0 flex mt-28 md:mt-0 gap-y-12 flex-col md:flex-row items-center justify-between`,
+  contentWrapper: `flex flex-col-reverse md:flex-row items-center gap-5`,
 }

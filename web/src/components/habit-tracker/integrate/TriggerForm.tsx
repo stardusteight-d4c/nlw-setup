@@ -1,6 +1,5 @@
-import { Plus, X } from 'phosphor-react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { NewHabitModal } from './NewHabitForm'
+import { NewHabitModal } from './NewHabitModal'
 
 interface Props {
   children: React.ReactNode

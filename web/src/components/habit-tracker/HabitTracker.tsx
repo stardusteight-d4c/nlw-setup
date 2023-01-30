@@ -24,5 +24,5 @@ export const HabitTracker = ({ setLoading }: Props) => {
 
 const style = {
   mainContent: `w-full relative max-w-5xl px-6 flex flex-col gap-y-16`,
-  welcomeSpan: `absolute top-[118px] left-10 z-50 text-zinc-600`,
+  welcomeSpan: `absolute top-[395px] md:top-[118px] left-4 md:left-10 z-50 text-zinc-600`,
 }

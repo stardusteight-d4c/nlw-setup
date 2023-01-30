@@ -54,5 +54,5 @@ export const App = (props: Props) => {
 }
 
 const style = {
-  wrapper: `w-screen h-screen flex items-center justify-center`,
+  wrapper: `w-screen h-screen overflow-x-hidden flex items-center justify-center`,
 }
