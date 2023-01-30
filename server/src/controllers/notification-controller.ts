@@ -1,12 +1,15 @@
 import WebPush from 'web-push'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 // get Public and Private Key
 // console.log(WebPush.generateVAPIDKeys())
 
 const publicKey = `BAmA8fBVC3iLwrOsykZ5PqpV5p1Ne_9hJn7Bo0rAnM5JZGdG-Lj7L6Ntmhj6IWVZTgkB4thay3yJiOlW5HhUh4Y`
-const privateKey = `yggPMzXP-F_rPG-NVd2VTyyEo3plyZSghdG8If3ORF0`
+const privateKey = process.env.NOTIFICATION_PRIVATE_KEY!
 
 WebPush.setVapidDetails('http://localhost:3333', publicKey, privateKey)
 
@@ -18,7 +21,6 @@ export class NotificationController {
   }
 
   async register(_: FastifyRequest, reply: FastifyReply) {
-    // console.log(request.body)
     return reply.status(201).send()
   }
 
@@ -31,13 +33,21 @@ export class NotificationController {
           p256dh: z.string(),
         }),
       }),
+      user: z.string(),
     })
 
-    const { subscription } = sendPushBody.parse(request.body)
+    const { subscription, user } = sendPushBody.parse(request.body)
 
-    setTimeout(() => {
-      WebPush.sendNotification(subscription, 'Hello World from Backend!')
-    }, 5000)
+    // setTimeout(() => {
+    //   WebPush.sendNotification(
+    //     subscription,
+    //     `Bom te ver novamente! ${user.split('@')[0]}`
+    //   )
+    // }, 1000)
+    WebPush.sendNotification(
+      subscription,
+      `Bom te ver novamente! ${user.split('@')[0]}`
+    )
 
     return reply.status(201).send()
   }

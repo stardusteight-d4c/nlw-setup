@@ -1,9 +1,9 @@
 import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { currentUserState } from '../atoms'
-import { api } from '../lib/axios'
-import { generateDatesFromYearBeginning } from '../utils/generate-dates-from-year-beginning'
+import { currentUserState } from '../../../atoms'
+import { api } from '../../../lib/axios'
+import { generateDatesFromYearBeginning } from '../../../utils/generate-dates-from-year-beginning'
 import { HabitDay } from './HabitDay'
 
 interface Props {}

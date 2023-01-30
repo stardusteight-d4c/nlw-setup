@@ -3,8 +3,8 @@ import dayjs from 'dayjs'
 import { Check } from 'phosphor-react'
 import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { currentUserState } from '../atoms'
-import { api } from '../lib/axios'
+import { currentUserState } from '../../../atoms'
+import { api } from '../../../lib/axios'
 
 interface Props {
   date: Date

@@ -1,17 +1,19 @@
-import logoImage from '../assets/logo.svg'
+import logoImage from '../../../assets/logo.svg'
 import { Plus, X } from 'phosphor-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { NewHabitForm } from './NewHabitForm'
-import LogoutButton from './LogoutButton'
+import LogoutButton from '../../LogoutButton'
 
-interface Props {}
+interface Props {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-export const Header = (props: Props) => {
-  return ( 
+export const Header = ({ setLoading }: Props) => {
+  return (
     <header className="w-full max-w-3xl mx-auto z-0 flex items-center justify-between">
       <img src={logoImage} alt="Habits" />
       <div className="flex items-center gap-x-5">
-        <LogoutButton />
+        <LogoutButton setLoading={setLoading} />
         <Dialog.Root>
           <Dialog.Trigger
             type="button"
