@@ -41,7 +41,7 @@ export const App = (props: Props) => {
     const isAuthenticated = currentUser.email !== ''
 
     return (
-      (loading && <Loader />) ||
+      (loading && <Loader styles="h-screen w-screen" />) ||
       (isAuthenticated ? <HabitTracker setLoading={setLoading} /> : <Login />)
     )
   }

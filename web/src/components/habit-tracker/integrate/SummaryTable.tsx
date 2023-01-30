@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil'
 import { currentUserState } from '../../../atoms'
 import { api } from '../../../lib/axios'
 import { generateDatesFromYearBeginning } from '../../../utils/generate-dates-from-year-beginning'
+import { Loader } from '../../Loader'
 import { HabitDay } from './HabitDay'
 
 interface Props {}
@@ -18,6 +19,7 @@ type Summary = Array<{
 export const SummaryTable = (props: Props) => {
   const [summary, setSummary] = useState<Summary>([])
   const [currentUser] = useRecoilState(currentUserState)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
   const summaryDates = generateDatesFromYearBeginning()
@@ -32,7 +34,12 @@ export const SummaryTable = (props: Props) => {
         },
       })
       .then((res) => setSummary(res.data))
+    setLoading(false)
   }, [])
+
+  if (loading) {
+    return <></>
+  }
 
   return (
     <div className={style.wrapper}>
@@ -46,21 +53,22 @@ export const SummaryTable = (props: Props) => {
           ))}
         </header>
         <div className={style.gridContainer}>
-          {summary.length > 0 &&
-            summaryDates.map((date) => {
-              const dayInSummary = summary.find((day) => {
-                return dayjs(date).isSame(day.date, 'day')
-              })
-
-              return (
-                <HabitDay
-                  key={date.toString()}
-                  date={date}
-                  amount={dayInSummary?.amount}
-                  defaultCompleted={dayInSummary?.completed}
-                />
+          {summaryDates.map((date) => {
+            const dayInSummary = summary.find((day) => {
+              return dayjs(new Date(date).toISOString()).isSame(
+                new Date(day.date).toISOString(),
+                'day'
               )
-            })}
+            })
+            return (
+              <HabitDay
+                key={date.toString()}
+                date={date}
+                amount={dayInSummary?.amount}
+                defaultCompleted={dayInSummary?.completed}
+              />
+            )
+          })}
           {amountOfDaysToFill > 0 &&
             Array.from({ length: amountOfDaysToFill }).map((_, index) => (
               <div key={index} className={style.placeholders} />

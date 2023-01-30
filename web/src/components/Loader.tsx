@@ -1,10 +1,12 @@
 import loader from '../assets/laoder.svg'
 
-interface Props {}
+interface Props {
+  styles: string
+}
 
-export const Loader = (props: Props) => {
+export const Loader = ({styles}: Props) => {
   return (
-    <div className="flex items-center justify-center h-screen w-screen">
+    <div className={`flex items-center justify-center ${styles}`}>
       <div role="status">
         <svg
           aria-hidden="true"

@@ -140,7 +140,18 @@ export class HabitController {
     try {
       const { user_id } = summaryQueryString.parse(request.query)
 
-      console.log('user_id', user_id)
+      // await prisma.day.findMany({
+      //   where: {
+      //     userId: user_id,
+      //   },
+      //   select: {
+      //     id: true,
+      //     date: true
+      //   },
+      //   cursor: {
+          
+      //   }
+      // })
 
       const summary = await prisma.$queryRaw`
       SELECT D.id, D.date,
@@ -153,14 +164,11 @@ export class HabitController {
         JOIN habits H
         ON H.id = HWD.habit_id 
         WHERE HWD.week_day = cast(strftime('%w', D.date/1000.0, 'unixepoch') as int) 
-        AND H.userId = ${user_id}
-        -- AND H.created_at <= D.date
+        AND H.created_at <= D.date
       ) as amount
       FROM days D 
+      WHERE userId = ${user_id}
       `
-
-      console.log(summary)
-
       return summary
     } catch (error) {
       console.log(error)

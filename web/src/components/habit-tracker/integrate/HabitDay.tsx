@@ -2,7 +2,7 @@ import * as Popover from '@radix-ui/react-popover'
 import { ProgressBar } from './ProgressBar'
 import dayjs from 'dayjs'
 import { HabitList } from './HabitList'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props {
   date: Date
@@ -12,15 +12,19 @@ interface Props {
 
 export const HabitDay = ({ defaultCompleted = 0, amount = 0, date }: Props) => {
   const [completed, setCompleted] = useState(defaultCompleted)
-
+  
   const completedPercentage =
     amount > 0 ? Math.round((completed / amount) * 100) : 0
+
+    useEffect(() => {
+      setCompleted(defaultCompleted)
+   }, [defaultCompleted])
 
   const dayAndMonth = dayjs(date).format('DD/MM')
   const dayOfWeek = dayjs(date).format('dddd')
 
-  function handleCompletedChange(completed: number) {
-    setCompleted(completed)
+  function handleCompletedChange(completedParam: number) {
+    setCompleted(completedParam)
   }
 
   return (
