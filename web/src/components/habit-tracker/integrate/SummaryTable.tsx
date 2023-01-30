@@ -35,6 +35,8 @@ export const SummaryTable = (props: Props) => {
   }, [])
 
   return (
+    <div className="relative max-w-5xl h-full">
+    <div className="inset-y-0 right-0 z-40 absolute w-[180px] bg-gradient-to-r from-transparent via-background to-background" />
     <div className="scroll-style p-4 w-full overflow-x-scroll flex">
       <header className="grid grid-rows-7 z-20 bg-background/70 -ml-14 z-fit h-fit fixed grid-flow-row gap-3">
         {weekDays.map((day, index) => (
@@ -71,6 +73,7 @@ export const SummaryTable = (props: Props) => {
               className="w-10 h-10 bg-zinc-900 border-2 border-zinc-800 rounded-lg opacity-40 cursor-not-allowed"
             />
           ))}
+      </div>
       </div>
     </div>
   )

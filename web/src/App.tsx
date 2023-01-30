@@ -1,5 +1,4 @@
 import { useRecoilState } from 'recoil'
-import LoginButton from './components/login/integrate/LoginButton'
 import { api } from './lib/axios'
 import { currentUserState } from './atoms/index'
 import { useEffect, useState } from 'react'
