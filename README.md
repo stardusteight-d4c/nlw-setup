@@ -82,7 +82,7 @@ async summary(request: FastifyRequest) {
 }
 ```
 
-### Intl — ECMAScript Internationalization API and toLocaleDateString
+### Intl | ECMAScript Internationalization API and toLocaleDateString
 
 The `Intl.DateTimeFormat object` enables language-sensitive date and time formatting.
 
