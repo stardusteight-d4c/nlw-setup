@@ -120,3 +120,5 @@ date.toLocaleDateString("pt-br", options)
 // console.log(date.toLocaleDateString("pt-br", options))
 // 31 de janeiro de 2023
 ```
+
+*<i>developer.mozilla.org</i> <br />
