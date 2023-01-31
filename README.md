@@ -40,7 +40,7 @@ For example, for us, knowing what happened first, if it was something at `10/04/
 
 Another situation would be: `How much does the date 09/16/2004 23:59:58 UTC give plus 12 days, 10 hours and 40 minutes?` The complication in this type of calculation lies in correcting the overflow as the processing in stages is carried out . That is, when adding the 40 minutes to the date we would have 99 minutes, before adding the 10 hours we would need to correct this value, so the minute would be 39 and the hour would add 1, but 24 hours also needs to be corrected to 0 which would add 1 to the day, resulting in 09/17/2004 0:39:58, only then would we add the 10 hours, make the corrections, add the days and again make corrections. It is easily seen that this is repetitive work that should be avoided.
 
-*<i>en.wikipedia.org/wiki/Unix_time</i>
+*<i>en.wikipedia.org/wiki/Unix_time</i> <br />
 
 In Nodejs, `dateNow` is a number and is in Unix Epoch.
 
@@ -120,5 +120,159 @@ date.toLocaleDateString("pt-br", options)
 // console.log(date.toLocaleDateString("pt-br", options))
 // 31 de janeiro de 2023
 ```
-
 *<i>developer.mozilla.org</i> <br />
+
+<br />
+
+## Auth0 Authentication 
+
+`Reduce costs and risks that come with building your own solution`. A flexible solution that plugs into any application written in any language. Auth0 lets you quickly add authentication to your React app and gain access to user profile information. We will now see how to integrate `Auth0` with any React application using the Auth0 React SDK (Software Development Kit).
+
+### On the platform
+
+#### Get Your Application Keys 
+
+When you signed up for Auth0, a new application was created for you, or you could have created a new one. You will need some details about that application to communicate with Auth0. You can get these details from the Application Settings section in the Auth0 dashboard.
+
+You need the following information:
+
+ - Domain
+ - Client ID
+
+#### Configure Callback URLs
+
+A `callback URL is a URL in your application where Auth0 redirects the user after they have authenticated`. The callback URL for your app must be added to the Allowed Callback URLs field in your Application Settings. If this field is not set, users will be unable to log in to the application and will get an error.
+
+#### Configure Allowed Web Origins
+
+You need to add the URL for your app to the `Allowed Web Origins` field in your Application Settings. If you don't register your application URL here, the application will be unable to silently refresh the authentication tokens and your users will be logged out the next time they visit the application, or refresh the page.
+
+### In code
+
+#### Install the Auth0 React SDK
+
+Run the following command within your project directory to install the `Auth0 React SDK`:
+
+ - `npm install @auth0/auth0-react`
+
+#### Configure the Auth0Provider component
+
+Under the hood, the Auth0 React SDK uses React Context to manage the authentication state of your users. `One way to integrate Auth0 with your React app is to wrap your root component with an Auth0Provider that you can import from the SDK`.
+
+```tsx
+// src/main.tsx
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <RecoilRoot>
+      <Auth0Provider
+        domain={import.meta.env.VITE_AUTH0_DOMAIN}
+        clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+        authorizationParams={{
+          redirect_uri: window.location.origin,
+        }}
+        cacheLocation="localstorage"
+      >
+        <App />
+      </Auth0Provider>
+    </RecoilRoot>
+  </React.StrictMode>
+)
+```
+
+#### Add Login to Your Application
+
+The `Auth0 React SDK` gives you tools to quickly implement user authentication in your React application, such as creating a login button using the `loginWithRedirect()` method from the `useAuth0()` hook. Executing `loginWithRedirect()` redirects your users to the Auth0 Universal Login Page, where Auth0 can authenticate them. Upon successful authentication, Auth0 will redirect your users back to your application.
+
+```tsx
+// src/components/login/integrate/LoginButton.tsx
+
+import { useAuth0 } from '@auth0/auth0-react'
+import { useRecoilState } from 'recoil'
+import { currentUserState } from '../../../atoms'
+import { api } from '../../../lib/axios'
+import { Lightning } from 'phosphor-react'
+
+export const LoginButton = () => {
+  const { loginWithPopup, user } = useAuth0()
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState)
+  const notAuthenticated = user?.email && currentUser.email === ''
+
+  if (notAuthenticated) {
+    api
+      .post('/auth/login', {
+        email: user.email,
+        picture: user.picture,
+      })
+      .then((res) => {
+        setCurrentUser({
+          id: res.data.user.id,
+          email: res.data.user.email,
+          picture: res.data.user.picture,
+        })
+        localStorage.setItem('session', res.data.sessionToken)
+      })
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => loginWithPopup()}
+      className={style.wrapper}
+    >
+      <Lightning weight="bold" size={20} />
+      Login
+    </button>
+  )
+}
+```
+
+#### Add Logout to Your Application
+
+Now that you can log in to your React application, you need a way to log out. You can create a logout button using the `logout()` method from the `useAuth0()` hook. Executing logout() redirects your users to your Auth0 logout endpoint (https://YOUR_DOMAIN/v2/logout) and then immediately redirects them to your application.
+
+```tsx
+// src/components/LogoutButton.tsx
+
+import React from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
+import { LightningSlash, SignOut } from 'phosphor-react'
+import { useRecoilState } from 'recoil'
+import { currentUserState } from '../atoms'
+
+interface Props {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const LogoutButton = ({ setLoading }: Props) => {
+  const { logout } = useAuth0()
+  const [_, setCurrentUser] = useRecoilState(currentUserState)
+
+  return (
+    <button
+      onClick={() => {
+        setLoading(true)
+        localStorage.removeItem('session')
+        setCurrentUser({
+          id: '',
+          email: '',
+          picture: '',
+        })
+        logout()
+      }}
+      type="button"
+      className={style.wrapper}
+    >
+      <LightningSlash weight="bold" size={20} />
+      Logout
+    </button>
+  )
+}
+```
+*<i>manage.auth0.com/dashboard/us/dev-e62trphxje27wnkf/applications/EMdCnQWNmsjY1eg8vJEsEhFxIFE57Mqo/quickstart</i> <br />
+
+<div align="center">
+<img src="auth0-login.png" width="500" />
+</div>
+
+
