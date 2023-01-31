@@ -298,10 +298,6 @@ The `ServiceWorkerContainer interface` of the `Service Worker API` provides an o
 
 Most importantly, it exposes the `ServiceWorkerContainer.register()` method used to register service workers, and the `ServiceWorkerContainer.controller` property used to determine whether or not the current page is actively controlled.
 
-<div align="center">
-<img src="service-worker-container.png" width="200" />
-</div> 
-
 #### Instance methods
 
 ##### ServiceWorkerContainer.register()
