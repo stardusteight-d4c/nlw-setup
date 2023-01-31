@@ -274,4 +274,210 @@ export const LogoutButton = ({ setLoading }: Props) => {
 <img src="auth0-login.png" width="500" />
 </div>
 
+<br />
+
+## Services Workers and Web Push API Notifications 
+
+Services workers are scripts that we can keep running in our application even when it is closed or even when the user has no internet connection.
+
+Essentially `a service worker behaves like a proxy server` sitting between a web application, the browser and the network (when available). They serve, among other things, to enable the creation of efficient offline experiences, intercept network requests – acting appropriately according to the current connection status – and update assets residing on the server. `Service workers also allow access to push notification and background sync` APIs.
+
+### Service worker concepts and usage
+
+A service worker is an `event-driven worker` registered against an origin and a path. `It takes the form of a JavaScript file` that can control the web-page/site that it is associated with, intercepting and modifying navigation and resource requests, and caching resources in a very granular fashion to give you complete control over how your app behaves in certain situations (the most obvious one being when the network is not available).
+
+`A service worker is run in a worker context: it therefore has no DOM access, and runs on a different thread to the main JavaScript that powers your app, so it is non-blocking`. It is designed to be fully async; as a consequence, APIs such as synchronous XHR and Web Storage can't be used inside a service worker.
+
+`Service workers only run over HTTPS`, for security reasons. Most significantly, HTTP connections are susceptible to malicious code injection by `man in the middle attacks`, and such attacks could be worse if allowed access to these powerful APIs. In Firefox, service worker APIs are also hidden and cannot be used when the user is in private browsing mode.
+
+### Navigator.serviceWorker
+
+The `Navigator.serviceWorker` read-only property returns the `ServiceWorkerContainer object` for the associated document, `which provides access to registration, removal, upgrade, and communication with the ServiceWorker`.
+
+The `ServiceWorkerContainer interface` of the `Service Worker API` provides an object representing the service worker as an overall unit in the network ecosystem, including facilities to `register, unregister and update service workers`, and access the state of service workers and their registrations.
+
+Most importantly, it exposes the `ServiceWorkerContainer.register()` method used to register service workers, and the `ServiceWorkerContainer.controller` property used to determine whether or not the current page is actively controlled.
+
+<div align="center">
+<img src="service-worker-container.png" width="200" />
+</div> 
+
+#### Instance methods
+
+##### ServiceWorkerContainer.register()
+
+ - Creates or updates a `ServiceWorkerRegistration` for the given `scriptURL`.
+ 
+##### ServiceWorkerContainer.getRegistration()
+
+ - Gets a `ServiceWorkerRegistration` object whose scope matches the provided `document URL`. The method returns a Promise that resolves to a ServiceWorkerRegistration or undefined.
+ 
+### PushManager
+
+The `PushManager interface of the Push API` provides a way to receive notifications from third-party servers as well as request URLs for push notifications.
+
+This interface is accessed via the `ServiceWorkerRegistration.pushManager` property.
+
+#### Instance methods
+
+##### PushManager.getSubscription()
+
+ - Retrieves an existing push subscription. It returns a Promise that resolves to a PushSubscription object containing details of an existing subscription. If no existing subscription exists, this resolves to a null value.
+ 
+##### PushManager.permissionState()
+
+ - Returns a Promise that resolves to the permission state of the current PushManager, which will be one of `'granted'`, `'denied'`, or `'prompt'`.
+
+##### PushManager.subscribe()
+
+ - `Subscribes to a push service`. It returns a Promise that resolves to a PushSubscription object containing details of a push subscription. A new push subscription is created if the current service worker does not have an existing subscription.
+
+### ServiceWorkerRegistration.showNotification()
+
+The `showNotification()` method of the ServiceWorkerRegistration interface creates a notification on an active service worker. 
+
+### ExtendableEvent.waitUntil()
+
+`The ExtendableEvent.waitUntil() method tells the event dispatcher that work is ongoing`. It can also be used to detect whether that work was successful. In service workers, `waitUntil()` tells the browser that work is ongoing until the promise settles, and it shouldn't terminate the service worker if it wants that work to complete.
+
+`The install events in service workers use waitUntil() to hold the service worker in the installing phase until tasks complete`. If the promise passed to waitUntil() rejects, the install is considered a failure, and the installing service worker is discarded. `This is primarily used to ensure that a service worker is not considered installed until all of the core caches it depends on are successfully populated`. 
+
+```js
+// public/service-worker.js
+
+self.addEventListener('push', function (event) {
+  const body = event.data?.text() ?? ''
+  event.waitUntil(
+    self.registration.showNotification('Habits', {
+      body,
+    })
+  )
+})
+
+// src/utils/handleNotifications.ts
+
+export function handleNotifications(currentUser: {
+  id: string
+  email: string
+  picture: string
+}) {
+  navigator.serviceWorker
+    .register('service-worker.js')
+    .then(async (serviceWorker) => {
+      let subscription = await serviceWorker.pushManager.getSubscription()
+
+      if (!subscription) {
+        const publicKeyResponse = await api.get('/push/public_key')
+
+        subscription = await serviceWorker.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: publicKeyResponse.data.publicKey,
+        })
+      }
+
+      await api.post('/notification/register', {
+        subscription,
+      })
+
+      if (currentUser.email !== '')
+        await api.post('/notification/send', {
+          subscription,
+          user: currentUser.email,
+        })
+    })
+}
+```
+
+*<i>developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API</i> <br />
+
+## WebPush Library
+
+`Web push` requires push messages triggered from a backend to be done via the `Web Push Protocol` and if you want to send data with your push message you should also `encrypt that data according to the specification Message Encryption for Web Push`.
+
+This module facilitates sending messages and also handles legacy support for browsers that rely on GCM (Google Cloud Messaging) for message sending/delivery.
+
+#### Voluntary Application Server Identification for Web Push (draft-ietf-webpush-vapid-01)
+
+```
+// VAPID keys should be generated only once.
+// get Public and Private Key
+const vapidKeys = webpush.generateVAPIDKeys();
+```
+
+`An application server can voluntarily identify itself to a push service using the described technique`. This identification information can be used by the push service to attribute requests that are made by the same application server to a single entity. This can used to reduce the secrecy for push subscription URLs by being able to restrict subscriptions to a specific application server. An application server is further able to include additional information that the operator of a push service can use to contact the operator of the application server.
+
+So there are two reasons for `VAPID`.
+
+ - The first is to restrict the validity of a subscription to a specific application server `(so, by using VAPID, only your server will be able to send notifications to a subscriber)`.
+
+ - The second is to add more information to the push notification, so that the push service operator knows who is sending the notifications. If something is going wrong with your notifications, the operator knows who you are and can contact you. Moreover, they can offer you some kind of interface to monitor your push notifications.
+
+
+```ts
+// src/controllers/notification-controller.ts
+
+import WebPush from "web-push";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+// get Public and Private Key
+// console.log(WebPush.generateVAPIDKeys())
+
+const publicKey = `BAmA8fBVC3iLwrOsykZ5PqpV5p1Ne_9hJn7Bo0rAnM5JZGdG-Lj7L6Ntmhj6IWVZTgkB4thay3yJiOlW5HhUh4Y`;
+const privateKey = process.env.NOTIFICATION_PRIVATE_KEY!;
+
+WebPush.setVapidDetails("http://localhost:3333", publicKey, privateKey);
+
+export class NotificationController {
+  async publicKey() {
+    try {
+      return {
+        publicKey,
+      };
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async register(_: FastifyRequest, reply: FastifyReply) {
+    try {
+      return reply.status(201).send();
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async send(request: FastifyRequest, reply: FastifyReply) {
+    const sendPushBody = z.object({
+      subscription: z.object({
+        endpoint: z.string(),
+        keys: z.object({
+          auth: z.string(),
+          p256dh: z.string(),
+        }),
+      }),
+      user: z.string(),
+    });
+
+    try {
+      const { subscription, user } = sendPushBody.parse(request.body);
+      WebPush.sendNotification(
+        subscription,
+        `Bom te ver novamente! ${user.split("@")[0]}`,
+      );
+      return reply.status(201).send();
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+}
+```
+
+
 
