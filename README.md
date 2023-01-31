@@ -11,8 +11,7 @@
 
 :arrow_right: Working with Dates | Date constructor, Unix time, Intl and libraries <br /> 
 :arrow_right: Auth0 Authentication <br /> 
-:arrow_right: Services Workers <br /> 
-:arrow_right: Web Push API Notifications <br /> 
+:arrow_right: Services Workers and Web Push API Notifications <br /> 
 
 <br />
 
